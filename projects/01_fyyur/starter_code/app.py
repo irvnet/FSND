@@ -42,7 +42,7 @@ class Venue(db.Model):
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
 class Artist(db.Model):
-    __tablename__ = 'Artist'
+    __tablename__ = 'artist'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
@@ -52,6 +52,9 @@ class Artist(db.Model):
     genres = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
+
+    def __repr__(self):
+        return f'<Artist:: id:{self.id}, name:{self.name}>'
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
