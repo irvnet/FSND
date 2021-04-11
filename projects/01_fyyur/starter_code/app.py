@@ -49,7 +49,6 @@ class Venue(db.Model):
 def __repr__(self):
      return f'<Venue:: id:{self.id}, name:{self.name}>'     
 
-    # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
 class Artist(db.Model):
     __tablename__ = 'artist'
@@ -79,11 +78,8 @@ class Show(db.Model):
      start_time = db.Column(db.DateTime, nullable=False)
 
      def __repr__(self):
-         return '<Show {}{}>'.format(self.artist_id, self.venue_id)
+         return '<Show: Artist Id: {} Venue Id: {}>'.format(self.artist_id, self.venue_id)
 
-
-# TODO: implement any missing fields, as a database migration using Flask-Migrate
-# TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
 
 #----------------------------------------------------------------------------#
 # Filters.
