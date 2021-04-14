@@ -290,21 +290,10 @@ def delete_venue(venue_id):
 #  ----------------------------------------------------------------
 @app.route('/artists')  
 def artists():
-  # TODO: replace with real data returned from querying the database
-  # data=[{
-  #   "id": 4,
-  #   "name": "Guns N Petals",
-  # }, {
-  #   "id": 5,
-  #   "name": "Matt Quevedo",
-  # }, {
-  #   "id": 6,
-  #   "name": "The Wild Sax Band",
-  # }]
 
   try:
      error = False
-     artist_list = db.session.query(Artist).all()
+     item_list = db.session.query(Artist).all()
   except:
      error = True
      db.session.rollback()
@@ -314,7 +303,7 @@ def artists():
   if error:
      flash('An error occurred listing Artists')
 
-  return render_template('pages/artists.html', artists=artist_list)
+  return render_template('pages/artists.html', artists=item_list)
 
 @app.route('/artists/search', methods=['POST'])
 def search_artists():
