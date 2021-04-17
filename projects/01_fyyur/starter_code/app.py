@@ -520,7 +520,6 @@ def shows():
        "artist_image_link": show.artist.image_link,
        "start_time":        timestamp_str
   })
-  #TODO: convert the db timestamp to string
 
   print(data)
   return render_template('pages/shows.html', shows=data)
