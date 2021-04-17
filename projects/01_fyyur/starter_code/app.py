@@ -510,13 +510,15 @@ def shows():
   item_list = db.session.query(Show).join(Artist).join(Venue).all()
   data = []
   for show in item_list:
+     timestamp_str = show.start_time.strftime('%Y-%m-%d %H:%M:%S')
+
      data.append({
        "venue_id":          show.venue_id, 
        "venue_name":        show.venue.name,
        "artist_id":         show.artist_id,
        "artist_name":       show.artist.name,
        "artist_image_link": show.artist.image_link,
-       "start_time":        "2021-04-05"
+       "start_time":        timestamp_str
   })
   #TODO: convert the db timestamp to string
 
