@@ -294,7 +294,25 @@ def search_artists():
       "num_upcoming_shows": 0,
     }]
   }
-  return render_template('pages/search_artists.html', results=response, search_term=request.form.get('search_term', ''))
+
+  search_term = request.form.get('search_term', '')
+  search_result = db.session.query(Artist).filter(Artist.name.ilike(f'%{search_term}%')).all()
+  data = []
+
+  for result in search_result:
+     data.append({
+       "id": result.id,
+       "name": result.name,
+       "num_upcoming_shows": len(db.session.query(Show).filter(Show.artist_id == result.id).filter(Show.start_time > datetime.     now()).all()),
+     })
+
+  search_results={
+     "count": len(search_result),
+     "data": data
+  }
+
+
+  return render_template('pages/search_artists.html', results=search_results, search_term=request.form.get('search_term', ''))
 
 #  Show Artist
 #  ----------------------------------------------------------------
