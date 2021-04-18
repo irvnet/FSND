@@ -98,6 +98,9 @@ app.jinja_env.filters['datetime'] = format_datetime
 # Controllers.
 #----------------------------------------------------------------------------#
 
+
+#  Show Home page 
+#  ----------------------------------------------------------------
 @app.route('/')
 def index():
   return render_template('pages/home.html')
@@ -130,18 +133,6 @@ def venues():
 #  ----------------------------------------------------------------
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
-  # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
-  # seach for Hop should return "The Musical Hop".
-  # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"
-  response={
-    "count": 1,
-    "data": [{
-      "id": 2,
-      "name": "The Dueling Pianos Bar",
-      "num_upcoming_shows": 0,
-    }]
-  }
-
 
   search_term = request.form.get('search_term', '')
   search_result = db.session.query(Venue).filter(Venue.name.ilike(f'%{search_term}%')).all()
@@ -158,9 +149,6 @@ def search_venues():
      "count": len(search_result),
      "data": item_list
   }
-
-
-
 
   return render_template('pages/search_venues.html', results=search_results, search_term=request.form.get('search_term', ''))
 
@@ -244,6 +232,8 @@ def create_venue_submission():
      db.session.commit()
   except:
      error = True
+     print('*** Error saving new Venue...rolling back ***')
+     print(sys.exc_info())
      db.session.rollback()
   finally:
      db.session.close()
@@ -269,8 +259,9 @@ def delete_venue(venue_id):
      db.session.commit()
    except:
      error = True
+     print('*** Error deleting venue...rolling back ***')
+     print(sys.exc_info())
      db.session.rollback()
-     print("error: ", sys.exc_info())
    finally:
      db.session.close()
 
@@ -293,6 +284,8 @@ def artists():
      item_list = db.session.query(Artist).all()
   except:
      error = True
+     print('*** Error querying Artist list...rolling back ***')
+     print(sys.exc_info())
      db.session.rollback()
   finally:
      db.session.close()
@@ -388,8 +381,9 @@ def delete_artist(artist_id):
      db.session.commit()
    except:
      error = True
+     print('*** Error deleting Artist...rolling back ***')
+     print(sys.exc_info())
      db.session.rollback()
-     print("error: ", sys.exc_info() )
    finally:
      db.session.close()
 
@@ -446,11 +440,12 @@ def edit_artist_submission(artist_id):
   
   try:
      error = False
-     print('artist edit: ',item)
      db.session.add(item)
      db.session.commit()
   except:
      error = True
+     print('*** Error saving artist updates...rolling back ***')
+     print(sys.exc_info())
      db.session.rollback()
   finally:
      db.session.close()
@@ -487,15 +482,13 @@ def edit_venue(venue_id):
 
   return render_template('forms/edit_venue.html', form=form, venue=item)
 
-#  Edit Venue Submission
-#  ----------------------------------------------------------------
 @app.route('/venues/<int:venue_id>/edit', methods=['POST'])
 def edit_venue_submission(venue_id):
  
   # query venue from database
   item = Venue.query.get(venue_id)
 
-  # update database with form data
+  # update model with form data
   item.name                = request.form['name']
   item.city                = request.form['city']
   item.state               = request.form['state']
@@ -514,8 +507,9 @@ def edit_venue_submission(venue_id):
      db.session.commit()
   except:
      error = True
-     db.session.rollback()
+     print('*** Error saving venue updates...rolling back ***')
      print(sys.exc_info())
+     db.session.rollback()
   finally:
      db.session.close()
 
@@ -556,6 +550,8 @@ def create_artist_submission():
      db.session.commit()
   except:
      error = True
+     print('*** Error saving new Artist...rolling back ***')
+     print(sys.exc_info())
      db.session.rollback()
   finally:
      db.session.close()
@@ -608,7 +604,8 @@ def create_show_submission():
      db.session.commit()
   except:
      error = True
-     print('*** Error saving Show...rolling back ***')
+     print('*** Error saving new Show...rolling back ***')
+     print(sys.exc_info())
      db.session.rollback()
   finally:
      db.session.close()
