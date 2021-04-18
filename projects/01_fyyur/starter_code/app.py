@@ -141,7 +141,28 @@ def search_venues():
       "num_upcoming_shows": 0,
     }]
   }
-  return render_template('pages/search_venues.html', results=response, search_term=request.form.get('search_term', ''))
+
+
+  search_term = request.form.get('search_term', '')
+  search_result = db.session.query(Venue).filter(Venue.name.ilike(f'%{search_term}%')).all()
+  item_list = []
+
+  for venue in search_result:
+     item_list.append({
+       "id": venue.id,
+       "name": venue.name,
+       "num_upcoming_shows": len(db.session.query(Show).filter(Show.venue_id == venue.id).filter(Show.start_time > datetime.now()).all()),
+     })
+
+  search_results={
+     "count": len(search_result),
+     "data": item_list
+  }
+
+
+
+
+  return render_template('pages/search_venues.html', results=search_results, search_term=request.form.get('search_term', ''))
 
 
 #  Show Venue
@@ -283,24 +304,13 @@ def artists():
 
 @app.route('/artists/search', methods=['POST'])
 def search_artists():
-  # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
-  # seach for "A" should return "Guns N Petals", "Matt Quevado", and "The Wild Sax Band".
-  # search for "band" should return "The Wild Sax Band".
-  response={
-    "count": 1,
-    "data": [{
-      "id": 4,
-      "name": "Guns N Petals",
-      "num_upcoming_shows": 0,
-    }]
-  }
 
   search_term = request.form.get('search_term', '')
   search_result = db.session.query(Artist).filter(Artist.name.ilike(f'%{search_term}%')).all()
-  data = []
+  item_list = []
 
   for result in search_result:
-     data.append({
+     item_list.append({
        "id": result.id,
        "name": result.name,
        "num_upcoming_shows": len(db.session.query(Show).filter(Show.artist_id == result.id).filter(Show.start_time > datetime.     now()).all()),
@@ -308,7 +318,7 @@ def search_artists():
 
   search_results={
      "count": len(search_result),
-     "data": data
+     "data": item_list
   }
 
 
