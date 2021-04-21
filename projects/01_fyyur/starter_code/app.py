@@ -15,6 +15,7 @@ import logging
 from logging import Formatter, FileHandler
 from flask_wtf import Form
 from forms import *
+from models import *
 
 #----------------------------------------------------------------------------#
 # App Config.
@@ -23,61 +24,9 @@ from forms import *
 app = Flask(__name__)
 moment = Moment(app)
 app.config.from_object('config')
-db = SQLAlchemy(app)
+db.init_app(app)
 migrate = Migrate(app,db)
 
-
-#----------------------------------------------------------------------------#
-# Models.
-#----------------------------------------------------------------------------#
-
-class Venue(db.Model):
-     __tablename__ = 'venue'
-     id = db.Column(db.Integer, primary_key=True)
-     name = db.Column(db.String)
-     genres = db.Column(db.ARRAY(db.String()))
-     address = db.Column(db.String(120))
-     city = db.Column(db.String(120))
-     state = db.Column(db.String(120))
-     phone = db.Column(db.String(120))
-     image_link = db.Column(db.String(500))
-     facebook_link = db.Column(db.String(120))
-     website = db.Column(db.String(120))
-     seeking_talent = db.Column(db.Boolean)
-     seeking_description = db.Column(db.String(500))
-     shows = db.relationship('Show', backref="venue", lazy=True)
-
-def __repr__(self):
-     return f'<Venue:: id:{self.id}, name:{self.name}>'     
-
-
-class Artist(db.Model):
-    __tablename__ = 'artist'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
-    genres = db.Column(db.ARRAY(db.String))
-    city = db.Column(db.String(120))
-    state = db.Column(db.String(120))
-    phone = db.Column(db.String(120))
-    website = db.Column(db.String(120))
-    image_link = db.Column(db.String(500))
-    facebook_link = db.Column(db.String(120))
-    seeking_venue = db.Column(db.Boolean)
-    seeking_description = db.Column(db.String(500))
-    shows = db.relationship('Show', backref="artist", lazy=True)
-
-    def __repr__(self):
-        return f'<Artist:: id:{self.id}, name:{self.name}>'
-
-class Show(db.Model):
-     __tablename__ = 'show'
-     id         = db.Column(db.Integer, primary_key=True)
-     artist_id  = db.Column(db.Integer, db.ForeignKey('artist.id'), nullable=False)
-     venue_id   = db.Column(db.Integer, db.ForeignKey('venue.id'), nullable=False)
-     start_time = db.Column(db.DateTime, nullable=False)
-
-     def __repr__(self):
-         return '<Show: Artist: {} Venue: {} start: {}>'.format(self.artist_id, self.venue_id, self.start_time)
 
 
 #----------------------------------------------------------------------------#
@@ -160,26 +109,33 @@ def show_venue(venue_id):
 
   item = Venue.query.get(venue_id)
 
+  print('*************************')
+  print('show venue...')
+  print('*************************')
+
   old_show_list = db.session.query(Show).join(Artist).filter(Show.venue_id==venue_id).filter(Show.start_time > datetime.now()).all()
   old_show_count = len(old_show_list)
   old_show_data = []
 
   for show in old_show_list:
+    timestamp_str = show.start_time.strftime('%Y-%m-%d %H:%M:%S')
     old_show_data.append({
        "venue_id":          show.venue_id,
        "venue_name":        show.venue.name,
        "artist_image_link": show.venue.image_link,
-       "start_time":        show.start_time.strftime('%Y-%m-%d %H:%M:%S')      
+       "start_time":        timestamp_str      
     })
 
   new_show_list =  db.session.query(Show).join(Artist).filter(Show.venue_id==venue_id).filter(Show.start_time < datetime.now()).all()
   new_show_count = len(new_show_list)
+  new_show_data = []
   for show in new_show_list:
+    timestamp_str = show.start_time.strftime('%Y-%m-%d %H:%M:%S')
     new_show_data.append({
        "venue_id":          show.venue_id,
        "venue_name":        show.venue.name,
        "artist_image_link": show.venue.image_link,
-       "start_time":        show.start_time.strftime('%Y-%m-%d %H:%M:%S')      
+       "start_time":        timestamp_str     
     })
 
   data={
@@ -194,8 +150,8 @@ def show_venue(venue_id):
     "facebook_link": item.facebook_link,
     "seeking_talent": item.seeking_talent,
     "image_link": item.image_link,
-    "past_shows": old_show_list,
-    "upcoming_shows": new_show_list,
+    "past_shows": old_show_data,
+    "upcoming_shows": new_show_data,
     "past_shows_count": old_show_count,
     "upcoming_shows_count": new_show_count,
   }
@@ -306,7 +262,7 @@ def search_artists():
      item_list.append({
        "id": result.id,
        "name": result.name,
-       "num_upcoming_shows": len(db.session.query(Show).filter(Show.artist_id == result.id).filter(Show.start_time > datetime.     now()).all()),
+       "num_upcoming_shows": len(db.session.query(Show).filter(Show.artist_id == result.id).filter(Show.start_time > datetime.now()).all()),
      })
 
   search_results={
@@ -327,22 +283,24 @@ def show_artist(artist_id):
    past_shows = []
 
    for show in past_shows_query:
+     timestamp_str = show.start_time.strftime('%Y-%m-%d %H:%M:%S')
      past_shows.append({
        "venue_id":          show.venue_id,
        "venue_name":        show.venue.name,
-       "artist_image_link": show.venue.image_link,
-       "start_time":        show.start_time.strftime('%Y-%m-%d %H:%M:%S')
+       "venue_image_link": show.venue.image_link,
+       "start_time":        timestamp_str
      })
 
    upcoming_shows_query = db.session.query(Show).join(Venue).filter(Show.artist_id==artist_id).filter(Show.start_time>datetime.    now()).all()
    upcoming_shows = []
 
    for show in upcoming_shows_query:
+     timestamp_str = show.start_time.strftime('%Y-%m-%d %H:%M:%S')
      upcoming_shows.append({
        "venue_id":          show.venue_id,
        "venue_name":        show.venue.name,
-       "artist_image_link": show.venue.image_link,
-       "start_time":        show.start_time.strftime('%Y-%m-%d %H:%M:%S')
+       "venue_image_link": show.venue.image_link,
+       "start_time":        timestamp_str
      })
 
    artist_data = {
@@ -582,7 +540,7 @@ def shows():
        "start_time":        timestamp_str
   })
 
-  print(data)
+  print('shows-list',data)
   return render_template('pages/shows.html', shows=data)
 
 
