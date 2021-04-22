@@ -275,7 +275,7 @@ def search_artists():
 
 #  Show Artist
 #  ----------------------------------------------------------------
-@app.route('/artists/<int:artist_id>/show')
+@app.route('/artists/<int:artist_id>')
 def show_artist(artist_id):
 
    artist_query = db.session.query(Artist).get(artist_id)
