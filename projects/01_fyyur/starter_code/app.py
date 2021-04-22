@@ -104,7 +104,7 @@ def search_venues():
 
 #  Show Venue
 #  ----------------------------------------------------------------
-@app.route('/venue/<int:venue_id>/show')
+@app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
 
   item = Venue.query.get(venue_id)
