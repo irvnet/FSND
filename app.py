@@ -109,10 +109,6 @@ def show_venue(venue_id):
 
   item = Venue.query.get(venue_id)
 
-  print('*************************')
-  print('show venue...')
-  print('*************************')
-
   old_show_list = db.session.query(Show).join(Artist).filter(Show.venue_id==venue_id).filter(Show.start_time > datetime.now()).all()
   old_show_count = len(old_show_list)
   old_show_data = []
@@ -165,6 +161,7 @@ def show_venue(venue_id):
 def create_venue_form():
   form = VenueForm()
   return render_template('forms/new_venue.html', form=form)
+  new_venue_id = 0
 
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
@@ -186,6 +183,7 @@ def create_venue_submission():
      error = False
      db.session.add(item)
      db.session.commit()
+     new_venue_id = item.id
   except:
      error = True
      print('*** Error saving new Venue...rolling back ***')
@@ -198,9 +196,9 @@ def create_venue_submission():
      flash('An error occurred. Venue ' + request.form['name']+ ' could not be listed.')
   if not error:
      flash('Venue ' + request.form['name'] + ' was successfully listed!')
-  return render_template('pages/home.html')
 
-  # TODO: modify data to be the data object returned from db insertion
+  print('** new venue:',item)
+  return redirect(url_for('show_venue', venue_id=new_venue_id))
 
 
 #  Delete Venue
@@ -380,9 +378,6 @@ def edit_artist(artist_id):
 def edit_artist_submission(artist_id):
 
   item = Artist.query.get(artist_id)
-  print('*************************')
-  print('submit-edited-artist:',item)
-  print('*************************')
 
   item.name                = request.form['name']
   item.city                = request.form['city']
