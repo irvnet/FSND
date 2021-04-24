@@ -166,10 +166,7 @@ def create_venue_form():
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
 
-  print("*** create_venue_submission: create venue object***")
   item                     = Venue()
-
-  print("*** create_venue_submission: read form ***")
   item.name                = request.form['name']
   item.address             = request.form['address']
   item.city                = request.form['city']
@@ -181,9 +178,7 @@ def create_venue_submission():
   item.website             = request.form['website_link']
   item.seeking_talent      = True if 'seeking_talent' in request.form else False
   item.seeking_description = request.form['seeking_description']
-  
-  print("*** create_venue_submission: venue model to submit ***")
-  print(item)  
+
 
   try:
      error = False
@@ -324,10 +319,6 @@ def show_artist(artist_id):
      "past_shows_count":     len(past_shows),
      "upcoming_shows_count": len(upcoming_shows),
    }
-
-   print('*************************')
-   print('show-artist:',artist_data)
-   print('*************************')
 
    return render_template('pages/show_artist.html', artist=artist_data)
 
@@ -507,6 +498,7 @@ def create_artist_submission():
      error = False
      db.session.add(item)
      db.session.commit()
+     new_artist_id = item.id
   except:
      error = True
      print('*** Error saving new Artist...rolling back ***')
@@ -519,8 +511,8 @@ def create_artist_submission():
      flash('An error occurred. Artist ' + request.form['name']+ ' could not be listed.')
   if not error:
      flash('Artist ' + request.form['name'] + ' was successfully listed!')
-  return render_template('pages/home.html')
-
+  
+  return redirect(url_for('show_artist', artist_id=artist_id))
 
 #  Shows
 #  ----------------------------------------------------------------
@@ -541,7 +533,6 @@ def shows():
        "start_time":        timestamp_str
   })
 
-  print('shows-list',data)
   return render_template('pages/shows.html', shows=data)
 
 
