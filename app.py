@@ -166,7 +166,10 @@ def create_venue_form():
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
 
+  print("*** create_venue_submission: create venue object***")
   item                     = Venue()
+
+  print("*** create_venue_submission: read form ***")
   item.name                = request.form['name']
   item.address             = request.form['address']
   item.city                = request.form['city']
@@ -179,6 +182,9 @@ def create_venue_submission():
   item.seeking_talent      = True if 'seeking_talent' in request.form else False
   item.seeking_description = request.form['seeking_description']
   
+  print("*** create_venue_submission: venue model to submit ***")
+  print(item)  
+
   try:
      error = False
      db.session.add(item)
@@ -456,7 +462,7 @@ def edit_venue_submission(venue_id):
 
   try:
      error = False
-     db.add(item)
+     db.session.add(item)
      db.session.commit()
   except:
      error = True
@@ -595,6 +601,5 @@ if not app.debug:
 #----------------------------------------------------------------------------#
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0', port=5000)
 
