@@ -1,8 +1,34 @@
 
+import enum
 from flask_sqlalchemy import SQLAlchemy
 
 
 db = SQLAlchemy()
+
+#----------------------------------------------------------------------------#
+# Enums
+#----------------------------------------------------------------------------#
+
+class GenresEnum(str, Enum):
+    Alternative    = 'Alternative'
+    Blues          = 'Blues'
+    Classical      = 'Classical'
+    Electronic     = 'Electronic'
+    Folk           = 'Folk'
+    Funk           = 'Funk'
+    HipHop         = 'HipHop'
+    HeavyMetal     = 'HeavyMetal'
+    Instrumental   = 'Instrumental'
+    Jazz           = 'Jazz'
+    MusicalTheatre = 'MusicalTheatre'
+    Pop            = 'Pop'
+    Punk           = 'Punk'
+    RnB            = 'RnB'
+    Reggae         = 'Reggae'
+    RocknRoll      = 'RocknRoll'
+    Soul           = 'Soul'
+    Other          = 'Other'
+
 
 #----------------------------------------------------------------------------#
 # Models.
