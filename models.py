@@ -1,5 +1,5 @@
 
-import enum
+from enum import Enum
 from flask_sqlalchemy import SQLAlchemy
 
 
@@ -9,7 +9,7 @@ db = SQLAlchemy()
 # Enums
 #----------------------------------------------------------------------------#
 
-class GenresEnum(str, Enum):
+class Genre(str, Enum):
     Alternative    = 'Alternative'
     Blues          = 'Blues'
     Classical      = 'Classical'
