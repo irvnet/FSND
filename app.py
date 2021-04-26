@@ -16,6 +16,7 @@ from logging import Formatter, FileHandler
 from flask_wtf import Form
 from forms import *
 from models import *
+from enum import Enum
 
 #----------------------------------------------------------------------------#
 # App Config.
@@ -48,7 +49,17 @@ app.jinja_env.filters['datetime'] = format_datetime
 #----------------------------------------------------------------------------#
 
 
-#  Show Home page 
+#  enum test
+#  ----------------------------------------------------------------
+@app.route('/enum-test')
+def enum_test():
+
+  print("enum-test",Genre('Alternative'))
+  return render_template('pages/home.html')
+
+
+
+#  Show Home page
 #  ----------------------------------------------------------------
 @app.route('/')
 def index():
@@ -119,7 +130,7 @@ def show_venue(venue_id):
        "venue_id":          show.venue_id,
        "venue_name":        show.venue.name,
        "artist_image_link": show.venue.image_link,
-       "start_time":        timestamp_str      
+       "start_time":        timestamp_str
     })
 
   new_show_list =  db.session.query(Show).join(Artist).filter(Show.venue_id==venue_id).filter(Show.start_time < datetime.now()).all()
@@ -131,7 +142,7 @@ def show_venue(venue_id):
        "venue_id":          show.venue_id,
        "venue_name":        show.venue.name,
        "artist_image_link": show.venue.image_link,
-       "start_time":        timestamp_str     
+       "start_time":        timestamp_str
     })
 
   data={
@@ -231,7 +242,7 @@ def delete_venue(venue_id):
 
 #  Show Artist list
 #  ----------------------------------------------------------------
-@app.route('/artists')  
+@app.route('/artists')
 def artists():
 
   try:
@@ -386,8 +397,8 @@ def edit_artist_submission(artist_id):
   item.website             = request.form['website_link']
   item.seeking_venue       = True if 'seeking_venue' in request.form else False
   item.seeking_description = request.form['seeking_description']
-  
-  
+
+
   try:
      error = False
      db.session.add(item)
@@ -434,7 +445,7 @@ def edit_venue(venue_id):
 
 @app.route('/venues/<int:venue_id>/edit', methods=['POST'])
 def edit_venue_submission(venue_id):
- 
+
   # query venue from database
   item = Venue.query.get(venue_id)
 
@@ -493,7 +504,7 @@ def create_artist_submission():
   item.website             = request.form['website_link']
   item.seeking_venue       = True if 'seeking_venue' in request.form else False
   item.seeking_description = request.form['seeking_description']
-  
+
   try:
      error = False
      db.session.add(item)
@@ -511,7 +522,7 @@ def create_artist_submission():
      flash('An error occurred. Artist ' + request.form['name']+ ' could not be listed.')
   if not error:
      flash('Artist ' + request.form['name'] + ' was successfully listed!')
-  
+
   return redirect(url_for('show_artist', artist_id=artist_id))
 
 #  Shows
@@ -525,7 +536,7 @@ def shows():
      timestamp_str = show.start_time.strftime('%Y-%m-%d %H:%M:%S')
 
      data.append({
-       "venue_id":          show.venue_id, 
+       "venue_id":          show.venue_id,
        "venue_name":        show.venue.name,
        "artist_id":         show.artist_id,
        "artist_name":       show.artist.name,
@@ -547,7 +558,7 @@ def create_show_submission():
   item.artist_id   = request.form.get('artist_id')
   item.venue_id    = request.form.get('venue_id')
   item.start_time  = request.form.get('start_time')
-  
+
   try:
      error = False
      db.session.add(item)
