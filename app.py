@@ -488,6 +488,7 @@ def edit_venue_submission(venue_id):
 
 @app.route('/artists/create', methods=['GET'])
 def create_artist_form():
+  new_artist_id = None
   form = ArtistForm()
   return render_template('forms/new_artist.html', form=form)
 
@@ -523,7 +524,7 @@ def create_artist_submission():
   if not error:
      flash('Artist ' + request.form['name'] + ' was successfully listed!')
 
-  return redirect(url_for('show_artist', artist_id=artist_id))
+  return redirect(url_for('show_artist', artist_id=new_artist_id))
 
 #  Shows
 #  ----------------------------------------------------------------
