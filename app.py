@@ -189,13 +189,16 @@ def create_venue_submission():
   item.website             = request.form['website_link']
   item.seeking_talent      = True if 'seeking_talent' in request.form else False
   item.seeking_description = request.form['seeking_description']
-
+  new_venue_id = None
 
   try:
      error = False
+     print("** new venue::",item)
+     print("** genres::",item.genres)
      db.session.add(item)
      db.session.commit()
      new_venue_id = item.id
+     print("*** new_venue_id::", new_venue_id)
   except:
      error = True
      print('*** Error saving new Venue...rolling back ***')
