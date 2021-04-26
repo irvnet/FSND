@@ -193,12 +193,9 @@ def create_venue_submission():
 
   try:
      error = False
-     print("** new venue::",item)
-     print("** genres::",item.genres)
      db.session.add(item)
      db.session.commit()
      new_venue_id = item.id
-     print("*** new_venue_id::", new_venue_id)
   except:
      error = True
      print('*** Error saving new Venue...rolling back ***')
