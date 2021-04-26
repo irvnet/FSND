@@ -9,25 +9,25 @@ db = SQLAlchemy()
 # Enums
 #----------------------------------------------------------------------------#
 
-class Genre(str, Enum):
-    Alternative    = 'Alternative'
-    Blues          = 'Blues'
-    Classical      = 'Classical'
-    Electronic     = 'Electronic'
-    Folk           = 'Folk'
-    Funk           = 'Funk'
-    HipHop         = 'HipHop'
-    HeavyMetal     = 'HeavyMetal'
-    Instrumental   = 'Instrumental'
-    Jazz           = 'Jazz'
-    MusicalTheatre = 'MusicalTheatre'
-    Pop            = 'Pop'
-    Punk           = 'Punk'
-    RnB            = 'RnB'
-    Reggae         = 'Reggae'
-    RocknRoll      = 'RocknRoll'
-    Soul           = 'Soul'
-    Other          = 'Other'
+class GenresEnum(str, Enum):
+    Alternative    =  'Alternative'
+    Blues          =  'Blues'
+    Classical      =  'Classical'
+    Electronic     =  'Electronic'
+    Folk           =  'Folk'
+    Funk           =  'Funk'
+    HipHop         =  'HipHop'
+    HeavyMetal     =  'HeavyMetal'
+    Instrumental   =  'Instrumental'
+    Jazz           =  'Jazz'
+    MusicalTheatre =  'MusicalTheatre'
+    Pop            =  'Pop'
+    Punk           =  'Punk'
+    RnB            =  'RnB'
+    Reggae         =  'Reggae'
+    RocknRoll      =  'RocknRoll'
+    Soul           =  'Soul'
+    Other          =  'Other'
 
 
 #----------------------------------------------------------------------------#
@@ -36,22 +36,19 @@ class Genre(str, Enum):
 
 class Venue(db.Model):
      __tablename__ = 'venue'
-     id = db.Column(db.Integer, primary_key=True)
-     name = db.Column(db.String)
-     genres = db.Column(db.ARRAY(db.String()))
-     address = db.Column(db.String(120))
-     city = db.Column(db.String(120))
-     state = db.Column(db.String(120))
-     phone = db.Column(db.String(120))
-     image_link = db.Column(db.String(500))
-     facebook_link = db.Column(db.String(120))
-     website = db.Column(db.String(120))
-     seeking_talent = db.Column(db.Boolean)
+     id                  = db.Column(db.Integer, primary_key=True)
+     name                = db.Column(db.String)
+     genres              = db.Column(db.ARRAY(db.Enum(GenresEnum)), default=GenresEnum.Other)
+     address             = db.Column(db.String(120))
+     city                = db.Column(db.String(120))
+     state               = db.Column(db.String(120))
+     phone               = db.Column(db.String(120))
+     image_link          = db.Column(db.String(500))
+     facebook_link       = db.Column(db.String(120))
+     website             = db.Column(db.String(120))
+     seeking_talent      = db.Column(db.Boolean)
      seeking_description = db.Column(db.String(500))
-     shows = db.relationship('Show', backref="venue", lazy=True)
-
-    #  def __repr__(self):
-    #      return f'<Venue:: id:{self.id}, name:{self.name}>'    
+     shows               = db.relationship('Show', backref="venue", lazy=True)
 
      def __repr__(self):
 	     value = "Venue({}, {})".format(self.id, self.name)
