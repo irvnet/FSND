@@ -85,7 +85,12 @@ class VenueForm(FlaskForm):
     )
 
 
-    phone = StringField('phone', [ validators.Length(min=10, max=10)  ])
+    phone = StringField('phone', 
+    [
+      validators.Regexp('^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$'),
+      validators.Length(min=10, max=10),
+      validators.DataRequired('Enter Phone Number')
+    ])
 
     image_link = StringField(
         'image_link'
