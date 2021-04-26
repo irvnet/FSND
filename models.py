@@ -38,7 +38,7 @@ class Venue(db.Model):
      __tablename__ = 'venue'
      id                  = db.Column(db.Integer, primary_key=True)
      name                = db.Column(db.String)
-     genres              = db.Column(db.ARRAY(db.Enum(GenresEnum)), default=GenresEnum.Other)
+     genres              = db.Column(db.ARRAY(db.String()))
      address             = db.Column(db.String(120))
      city                = db.Column(db.String(120))
      state               = db.Column(db.String(120))
