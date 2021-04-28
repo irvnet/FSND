@@ -175,25 +175,35 @@ def create_venue_form():
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
 
-  item                     = Venue()
-  item.name                = request.form['name']
-  item.address             = request.form['address']
-  item.city                = request.form['city']
-  item.state               = request.form['state']
-  item.phone               = request.form['phone']
-  item.genres              = request.form.getlist('genres'),
-  item.facebook_link       = request.form['facebook_link']
-  item.image_link          = request.form['image_link']
-  item.website             = request.form['website_link']
-  item.seeking_talent      = True if 'seeking_talent' in request.form else False
-  item.seeking_description = request.form['seeking_description']
+# grab a copy of the form
   new_venue_id = None
+  form = VenueForm(request.form)
 
   try:
+
+     if form.seeking_talent.data == 'True':
+        is_seeking_talent = True
+     else:
+        is_seeking_talent = False
+
+     venue = Venue(
+       name                = form.name.data,
+       address             = form.address.data,
+       city                = form.city.data,
+       state               = form.state.data,
+       phone               = form.phone.data,
+       genres              = form.genres.data,
+       facebook_link       = form.facebook_link.data,
+       image_link          = form.image_link.data,
+       website             = form.website_link.data,
+       seeking_talent      = is_seeking_talent,
+       seeking_description = form.seeking_description.data
+     )
+
      error = False
-     db.session.add(item)
+     db.session.add(venue)
      db.session.commit()
-     new_venue_id = item.id
+     new_venue_id = venue.id
   except:
      error = True
      print('*** Error saving new Venue...rolling back ***')
@@ -203,13 +213,11 @@ def create_venue_submission():
      db.session.close()
 
   if error:
-     flash('An error occurred. Venue ' + request.form['name']+ ' could not be listed.')
+       flash('An error occurred. Venue ' + form.name.data + ' could not be listed.')
   if not error:
-     flash('Venue ' + request.form['name'] + ' was successfully listed!')
-
-  print('** new venue:',item)
+     flash('Venue ' +form.name.data + ' was successfully listed!')
+     
   return redirect(url_for('show_venue', venue_id=new_venue_id))
-
 
 #  Delete Venue
 #  ----------------------------------------------------------------
