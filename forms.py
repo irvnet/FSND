@@ -59,6 +59,26 @@ state_choices=[
             ('WY', 'WY'),
 ]
 
+genre_choices=[
+            (GenresEnum.Alternative.name,    GenresEnum.Alternative.name),
+            (GenresEnum.Blues.name,          GenresEnum.Blues.name),
+            (GenresEnum.Classical.name,      GenresEnum.Classical.name),
+            (GenresEnum.Electronic.name,     GenresEnum.Electronic.name),
+            (GenresEnum.Folk.name,           GenresEnum.Folk.name),
+            (GenresEnum.Funk.name,           GenresEnum.Funk.name),
+            (GenresEnum.HipHop.name,         GenresEnum.HipHop.name),
+            (GenresEnum.HeavyMetal.name,     GenresEnum.HeavyMetal.name),
+            (GenresEnum.Instrumental.name,   GenresEnum.Instrumental.name),
+            (GenresEnum.Jazz.name,           GenresEnum.Jazz.name),
+            (GenresEnum.MusicalTheatre.name, GenresEnum.MusicalTheatre.name),
+            (GenresEnum.Pop.name,            GenresEnum.Pop.name),
+            (GenresEnum.Punk.name,           GenresEnum.Punk.name),
+            (GenresEnum.RnB.name,            GenresEnum.RnB.name),
+            (GenresEnum.Reggae.name,         GenresEnum.Reggae.name),
+            (GenresEnum.RocknRoll.name,      GenresEnum.RocknRoll.name),
+            (GenresEnum.Soul.name,           GenresEnum.Soul.name),
+            (GenresEnum.Other.name,          GenresEnum.Other.name),
+]
 
 
 
@@ -103,26 +123,7 @@ class VenueForm(Form):
     )
     genres = SelectMultipleField(
         'genres', validators=[DataRequired()],
-        choices=[
-            (GenresEnum.Alternative.name,    GenresEnum.Alternative.name),
-            (GenresEnum.Blues.name,          GenresEnum.Blues.name),
-            (GenresEnum.Classical.name,      GenresEnum.Classical.name),
-            (GenresEnum.Electronic.name,     GenresEnum.Electronic.name),
-            (GenresEnum.Folk.name,           GenresEnum.Folk.name),
-            (GenresEnum.Funk.name,           GenresEnum.Funk.name),
-            (GenresEnum.HipHop.name,         GenresEnum.HipHop.name),
-            (GenresEnum.HeavyMetal.name,     GenresEnum.HeavyMetal.name),
-            (GenresEnum.Instrumental.name,   GenresEnum.Instrumental.name),
-            (GenresEnum.Jazz.name,           GenresEnum.Jazz.name),
-            (GenresEnum.MusicalTheatre.name, GenresEnum.MusicalTheatre.name),
-            (GenresEnum.Pop.name,            GenresEnum.Pop.name),
-            (GenresEnum.Punk.name,           GenresEnum.Punk.name),
-            (GenresEnum.RnB.name,            GenresEnum.RnB.name),
-            (GenresEnum.Reggae.name,         GenresEnum.Reggae.name),
-            (GenresEnum.RocknRoll.name,      GenresEnum.RocknRoll.name),
-            (GenresEnum.Soul.name,           GenresEnum.Soul.name),
-            (GenresEnum.Other.name,          GenresEnum.Other.name),
-        ]
+        choices=genre_choices
     )
     facebook_link = StringField(
         'facebook_link', validators=[URL()]
@@ -159,27 +160,7 @@ class ArtistForm(Form):
     )
     genres = SelectMultipleField(
         'genres', validators=[DataRequired()],
-        choices=[
-            ('Alternative', 'Alternative'),
-            ('Blues', 'Blues'),
-            ('Classical', 'Classical'),
-            ('Country', 'Country'),
-            ('Electronic', 'Electronic'),
-            ('Folk', 'Folk'),
-            ('Funk', 'Funk'),
-            ('Hip-Hop', 'Hip-Hop'),
-            ('Heavy Metal', 'Heavy Metal'),
-            ('Instrumental', 'Instrumental'),
-            ('Jazz', 'Jazz'),
-            ('Musical Theatre', 'Musical Theatre'),
-            ('Pop', 'Pop'),
-            ('Punk', 'Punk'),
-            ('R&B', 'R&B'),
-            ('Reggae', 'Reggae'),
-            ('Rock n Roll', 'Rock n Roll'),
-            ('Soul', 'Soul'),
-            ('Other', 'Other'),
-        ]
+        choices=genre_choices
      )
     facebook_link = StringField(
         # TODO implement enum restriction
