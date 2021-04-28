@@ -57,16 +57,6 @@ app.jinja_env.filters['datetime'] = format_datetime
 #----------------------------------------------------------------------------#
 
 
-#  enum test
-#  ----------------------------------------------------------------
-@app.route('/enum-test')
-def enum_test():
-
-  print("enum-test",Genre('Alternative'))
-  return render_template('pages/home.html')
-
-
-
 #  Show Home page
 #  ----------------------------------------------------------------
 @app.route('/')
