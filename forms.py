@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask_wtf import Form, FlaskForm
+from flask_wtf import FlaskForm as Form
 from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, BooleanField
 from wtforms.validators import DataRequired, AnyOf, URL, Length, Regexp, InputRequired
 from wtforms import validators, ValidationError  
@@ -18,7 +18,7 @@ class ShowForm(Form):
         default= datetime.today()
     )
 
-class VenueForm(FlaskForm):
+class VenueForm(Form):
     name = StringField(
         'name', validators=[DataRequired()]
     )
