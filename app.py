@@ -453,24 +453,25 @@ def edit_venue(venue_id):
 def edit_venue_submission(venue_id):
 
   # query venue from database
-  item = Venue.query.get(venue_id)
+  venue = Venue.query.get(venue_id)
+  form = VenueForm(request.form)
 
   # update model with form data
-  item.name                = request.form['name']
-  item.city                = request.form['city']
-  item.state               = request.form['state']
-  item.address             = request.form['address']
-  item.phone               = request.form['phone']
-  item.genres              = request.form.getlist('genres')
-  item.image_link          = request.form['image_link']
-  item.facebook_link       = request.form['facebook_link']
-  item.website             = request.form['website_link']
-  item.seeking_talent      = True if 'seeking_talent' in request.form else False
-  item.seeking_description = request.form['seeking_description']
+  venue.name                = form.name.data
+  venue.city                = form.city.data
+  venue.state               = form.state.data
+  venue.address             = form.address.data
+  venue.phone               = form.phone.data
+  venue.genres              = form.genres.data
+  venue.image_link          = form.image_link.data
+  venue.facebook_link       = form.facebook_link.data
+  venue.website             = form.website_link.data
+  venue.seeking_talent      = True if form.seeking_talent.data else False
+  venue.seeking_description = form.seeking_description.data
 
   try:
      error = False
-     db.session.add(item)
+     db.session.add(venue)
      db.session.commit()
   except:
      error = True
