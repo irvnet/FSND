@@ -178,14 +178,14 @@ def create_venue_submission():
   new_venue_id = None
   error = False
   form = VenueForm(request.form, meta={'csrf': False})
-  venue = Venue()
+  new_venue = Venue()
 
   if form.validate():
     try:
-       form.populate_obj(venue)
-       db.session.add(venue)
+       form.populate_obj(new_venue)
+       db.session.add(new_venue)
        db.session.commit()
-       new_venue_id = venue.id
+       new_venue_id = new_venue.id
     except:
        error = True
        print('*** Error saving new Venue...rolling back ***')
@@ -198,8 +198,10 @@ def create_venue_submission():
     for field, err in form.errors.items():
         message.append(field + ' ' + '|'.join(err))
     flash('Errors ' + str(message))
+    return render_template('forms/new_venue.html', form=form, venue=new_venue)
+  
+  return redirect(url_for('show_venue', venue_id=new_venue_id)) 
 
-  return render_template('pages/home.html')
 
 #  Delete Venue
 #  ----------------------------------------------------------------
