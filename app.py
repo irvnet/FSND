@@ -116,52 +116,33 @@ def search_venues():
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
 
-  item = Venue.query.get(venue_id)
+  venue = Venue.query.get(venue_id)
 
-  old_show_list = db.session.query(Show).join(Artist).filter(Show.venue_id==venue_id).filter(Show.start_time > datetime.now()).all()
-  old_show_count = len(old_show_list)
-  old_show_data = []
+  past_shows = []
+  upcoming_shows = []
 
-  for show in old_show_list:
-    timestamp_str = show.start_time.strftime('%Y-%m-%d %H:%M:%S')
-    old_show_data.append({
-       "venue_id":          show.venue_id,
-       "venue_name":        show.venue.name,
-       "artist_image_link": show.venue.image_link,
-       "start_time":        timestamp_str
-    })
+  for show in venue.shows:
+      temp_show = {
+          'artist_id': show.artist_id,
+          'artist_name': show.artist.name,
+          'artist_image_link': show.artist.image_link,
+          'start_time': show.start_time.strftime("%m/%d/%Y, %H:%M")
+      }
+      if show.start_time <= datetime.now():
+          past_shows.append(temp_show)
+      else:
+          upcoming_shows.append(temp_show)
 
-  new_show_list =  db.session.query(Show).join(Artist).filter(Show.venue_id==venue_id).filter(Show.start_time < datetime.now()).all()
-  new_show_count = len(new_show_list)
-  new_show_data = []
-  for show in new_show_list:
-    timestamp_str = show.start_time.strftime('%Y-%m-%d %H:%M:%S')
-    new_show_data.append({
-       "venue_id":          show.venue_id,
-       "venue_name":        show.venue.name,
-       "artist_image_link": show.venue.image_link,
-       "start_time":        timestamp_str
-    })
+  # object class to dict
+  data = vars(venue)
 
-  data={
-    "id": item.id,
-    "name": item.name,
-    "genres": item.genres,
-    "address": item.address,
-    "city": item.city,
-    "state": item.state,
-    "phone": item.phone,
-    "website": item.website,
-    "facebook_link": item.facebook_link,
-    "seeking_talent": item.seeking_talent,
-    "image_link": item.image_link,
-    "past_shows": old_show_data,
-    "upcoming_shows": new_show_data,
-    "past_shows_count": old_show_count,
-    "upcoming_shows_count": new_show_count,
-  }
+  data['past_shows'] = past_shows
+  data['upcoming_shows'] = upcoming_shows
+  data['past_shows_count'] = len(past_shows)
+  data['upcoming_shows_count'] = len(upcoming_shows)
 
   return render_template('pages/show_venue.html', venue=data)
+
 
 #  Create Venue
 #  ----------------------------------------------------------------
