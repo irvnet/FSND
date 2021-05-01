@@ -4,6 +4,9 @@ from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField
 from wtforms.validators import DataRequired, AnyOf, URL, Length, Regexp, InputRequired
 from wtforms import validators, ValidationError  
 from models import GenresEnum
+import re
+
+
 
 state_choices=[
             ('AL', 'AL'),
@@ -94,7 +97,41 @@ class ShowForm(Form):
         default= datetime.today()
     )
 
+def is_valid_phone(number):
+    """ Validate phone numbers like:
+    1234567890 - no space
+    123.456.7890 - dot separator
+    123-456-7890 - dash separator
+    123 456 7890 - space separator
+
+    Patterns:
+    000 = [0-9]{3}
+    0000 = [0-9]{4}
+    -.  = ?[-. ]
+
+    Note: (? = optional) - Learn more: https://regex101.com/
+    """
+    regex = re.compile('^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$')
+    return regex.match(number)
+
 class VenueForm(Form):
+    def validate(self):
+      """Define a custom validate method in your Form:"""
+      rv = Form.validate(self)
+      if not rv:
+          return False
+      if not is_valid_phone(self.phone.data):
+          self.phone.errors.append(':: Invalid phone number:')
+          return False
+      if not set(self.genres.data).issubset(dict(genre_choices).keys()):
+          self.genres.errors.append(':: Invalid genres.')
+          return False
+      if self.state.data not in dict(state_choices).keys():
+          self.state.errors.append(':: Invalid state.')
+          return False
+      # if pass validation
+      return True
+
     name = StringField(
         'name', validators=[DataRequired()]
     )
@@ -108,12 +145,9 @@ class VenueForm(Form):
     address = StringField(
         'address', validators=[DataRequired()]
     )
-    phone = StringField('phone', 
-    [
-      validators.Regexp('^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$'),
-      validators.Length(min=10, max=12),
-      validators.DataRequired('Enter Phone Number')
-    ])
+
+    phone = StringField('phone')
+
     image_link = StringField(
         'image_link'
     )
@@ -133,7 +167,30 @@ class VenueForm(Form):
     )
 
 
+
+
+
+
 class ArtistForm(Form):
+
+    def validate(self):
+      """Define a custom validate method in your Form:"""
+      rv = Form.validate(self)
+      if not rv:
+          return False
+      if not is_valid_phone(self.phone.data):
+          self.phone.errors.append(':: Invalid phone number:')
+          return False
+      if not set(self.genres.data).issubset(dict(genre_choices).keys()):
+          self.genres.errors.append(':: Invalid genres.')
+          return False
+      if self.state.data not in dict(state_choices).keys():
+          self.state.errors.append(':: Invalid state.')
+          return False
+      # if pass validation
+      return True
+
+
     name = StringField(
         'name', validators=[DataRequired()]
     )
@@ -144,12 +201,8 @@ class ArtistForm(Form):
         'state', validators=[DataRequired()],
         choices=state_choices
     )
-    phone = StringField('phone', 
-    [
-      validators.Regexp('^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$'),
-      validators.Length(min=10, max=12),
-      validators.DataRequired('Enter Phone Number')
-    ])
+    phone = StringField('phone')
+    
     image_link = StringField(
         'image_link'
     )
