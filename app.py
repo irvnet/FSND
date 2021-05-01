@@ -382,7 +382,7 @@ def edit_artist_submission(artist_id):
         message.append(field + ' ' + '|'.join(err))
     flash('Errors ' + str(message))
     return render_template('forms/edit_artist.html', form=form, artist=artist)
-    
+
   return redirect(url_for('show_artist', artist_id=artist_id))
 
 
@@ -401,26 +401,28 @@ def edit_venue_submission(venue_id):
   # query venue from database
   error = False
   venue = Venue.query.get(venue_id)
-  form = VenueForm(request.form)
+  form = VenueForm(request.form, meta={'csrf': False})
+  
+  if form.validate():
+    try:
+       form.populate_obj(venue)
+       db.session.add(venue)
+       db.session.commit()
+    except:
+       error = True
+       print('*** Error saving venue updates...rolling back ***')
+       print(sys.exc_info())
+       db.session.rollback()
+    finally:
+       db.session.close()
+  else:
+    message = []
+    for field, err in form.errors.items():
+        message.append(field + ' ' + '|'.join(err))
+    flash('Errors ' + str(message))
+    return render_template('forms/edit_venue.html', form=form, venue=venue)
 
-  try:
-     form.populate_obj(venue)
-     db.session.add(venue)
-     db.session.commit()
-  except:
-     error = True
-     print('*** Error saving venue updates...rolling back ***')
-     print(sys.exc_info())
-     db.session.rollback()
-  finally:
-     db.session.close()
-
-  if error:
-     flash(f'Error occured updating Venue...')
-  if not error:
-     flash(f'Venue successfully updated!')
-  return redirect(url_for('show_venue', venue_id=venue_id))
-
+  return redirect(url_for('show_venue', venue_id=venue_id)) 
 
 
 
