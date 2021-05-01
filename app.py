@@ -362,25 +362,27 @@ def edit_artist_submission(artist_id):
 
   error = False
   artist = Artist.query.get(artist_id)
-  form = ArtistForm(request.form)
+  form = ArtistForm(request.form, meta={'csrf': False})
 
-  try:
-     form.populate_obj(artist)
-     db.session.add(artist)
-     db.session.commit()
-  except:
-     error = True
-     print('*** Error saving artist updates...rolling back ***')
-     print(sys.exc_info())
-     db.session.rollback()
-  finally:
-     db.session.close()
-
-  if error:
-     flash('An error occurred. Artist ' + form.name.data + ' could not be updated.')
-  if not error:
-     flash('Artist ' + form.name.data + ' was successfully updated!')
-
+  if form.validate():
+    try:
+       form.populate_obj(artist)
+       db.session.add(artist)
+       db.session.commit()
+    except:
+       error = True
+       print('*** Error saving artist updates...rolling back ***')
+       print(sys.exc_info())
+       db.session.rollback()
+    finally:
+       db.session.close()
+  else:
+    message = []
+    for field, err in form.errors.items():
+        message.append(field + ' ' + '|'.join(err))
+    flash('Errors ' + str(message))
+    return render_template('forms/edit_artist.html', form=form, artist=artist)
+    
   return redirect(url_for('show_artist', artist_id=artist_id))
 
 
