@@ -175,32 +175,13 @@ def create_venue_form():
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
 
-# grab a copy of the form
   new_venue_id = None
+  error = False
   form = VenueForm(request.form)
+  venue = Venue()
 
   try:
-
-     if form.seeking_talent.data == 'True':
-        is_seeking_talent = True
-     else:
-        is_seeking_talent = False
-
-     venue = Venue(
-       name                = form.name.data,
-       address             = form.address.data,
-       city                = form.city.data,
-       state               = form.state.data,
-       phone               = form.phone.data,
-       genres              = form.genres.data,
-       facebook_link       = form.facebook_link.data,
-       image_link          = form.image_link.data,
-       website             = form.website_link.data,
-       seeking_talent      = is_seeking_talent,
-       seeking_description = form.seeking_description.data
-     )
-
-     error = False
+     form.populate_obj(venue)
      db.session.add(venue)
      db.session.commit()
      new_venue_id = venue.id
