@@ -439,28 +439,31 @@ def create_artist_form():
 def create_artist_submission():
   error = False
   new_artist_id = None
-  form = ArtistForm(request.form)
+  form = ArtistForm(request.form, meta={'csrf': False})
   new_artist = Artist()
 
-  try:
-    form.populate_obj(new_artist)
-    db.session.add(new_artist)
-    db.session.commit()
-    new_artist_id = new_artist.id
-  except:
-    error = True
-    print('*** Error saving new Artist...rolling back ***')
-    print(sys.exc_info())
-    db.session.rollback()
-  finally:
-    db.session.close()
-
-  if error:
-     flash('An error occurred. Artist ' + form.name.data + ' could not be listed.')
-  if not error:
-     flash('Artist ' + form.name.data + ' was successfully listed!')
+  if form.validate():
+    try:
+      form.populate_obj(new_artist)
+      db.session.add(new_artist)
+      db.session.commit()
+      new_artist_id = new_artist.id
+    except:
+      error = True
+      print('*** Error saving new Artist...rolling back ***')
+      print(sys.exc_info())
+      db.session.rollback()
+    finally:
+      db.session.close()
+  else:
+    message = []
+    for field, err in form.errors.items():
+        message.append(field + ' ' + '|'.join(err))
+    flash('Errors ' + str(message))
+    return render_template('forms/new_artist.html', form=form, artist=new_artist)
 
   return redirect(url_for('show_artist', artist_id=new_artist_id))
+
 
 #  Shows
 #  ----------------------------------------------------------------
