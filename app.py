@@ -500,35 +500,40 @@ def create_artist_form():
 
 @app.route('/artists/create', methods=['POST'])
 def create_artist_submission():
-  item                     = Artist()
-  item.name                = request.form['name']
-  item.city                = request.form['city']
-  item.state               = request.form['state']
-  item.phone               = request.form['phone']
-  item.genres              = request.form.getlist('genres'),
-  item.facebook_link       = request.form['facebook_link']
-  item.image_link          = request.form['image_link']
-  item.website             = request.form['website_link']
-  item.seeking_venue       = True if 'seeking_venue' in request.form else False
-  item.seeking_description = request.form['seeking_description']
+  new_artist_id = None
+  form = ArtistForm(request.form)
+  is_seeking_venue = True if form.seeking_venue.data else False
 
   try:
-     error = False
-     db.session.add(item)
-     db.session.commit()
-     new_artist_id = item.id
+    new_artist = Artist(
+    name                = form.name.data,
+    city                = form.city.data,
+    state               = form.state.data,
+    phone               = form.phone.data,
+    genres              = form.genres.data,
+    facebook_link       = form.facebook_link.data,
+    image_link          = form.image_link.data,
+    website             = form.website_link.data,
+    seeking_venue       = is_seeking_venue,
+    seeking_description = form.seeking_description.data
+    )
+ 
+    error = False
+    db.session.add(new_artist)
+    db.session.commit()
+    new_artist_id = new_artist.id
   except:
-     error = True
-     print('*** Error saving new Artist...rolling back ***')
-     print(sys.exc_info())
-     db.session.rollback()
+    error = True
+    print('*** Error saving new Artist...rolling back ***')
+    print(sys.exc_info())
+    db.session.rollback()
   finally:
-     db.session.close()
+    db.session.close()
 
   if error:
-     flash('An error occurred. Artist ' + request.form['name']+ ' could not be listed.')
+     flash('An error occurred. Artist ' + form.name.data + ' could not be listed.')
   if not error:
-     flash('Artist ' + request.form['name'] + ' was successfully listed!')
+     flash('Artist ' + form.name.data + ' was successfully listed!')
 
   return redirect(url_for('show_artist', artist_id=new_artist_id))
 
