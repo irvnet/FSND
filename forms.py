@@ -4,6 +4,7 @@ from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField
 from wtforms.validators import DataRequired, AnyOf, URL, Length, Regexp, InputRequired
 from wtforms import validators, ValidationError  
 from models import GenresEnum
+import re
 
 state_choices=[
             ('AL', 'AL'),
@@ -81,6 +82,10 @@ genre_choices=[
 ]
 
 
+def is_valid_phone(number):
+    regex = re.compile('^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$')
+    return regex.match(number)
+
 
 class ShowForm(Form):
     artist_id = StringField(
@@ -109,15 +114,12 @@ class VenueForm(Form):
     address = StringField(
         'address', validators=[DataRequired()]
     )
-
-
     phone = StringField('phone', 
     [
       validators.Regexp('^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$'),
-      validators.Length(min=10, max=10),
+      validators.Length(min=10, max=12),
       validators.DataRequired('Enter Phone Number')
     ])
-
     image_link = StringField(
         'image_link'
     )
@@ -131,13 +133,10 @@ class VenueForm(Form):
     website_link = StringField(
         'website_link'
     )
-
     seeking_talent = BooleanField( 'seeking_talent' )
-
     seeking_description = StringField(
         'seeking_description'
     )
-
 
 
 class ArtistForm(Form):

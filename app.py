@@ -177,28 +177,29 @@ def create_venue_submission():
 
   new_venue_id = None
   error = False
-  form = VenueForm(request.form)
+  form = VenueForm(request.form, meta={'csrf': False})
   venue = Venue()
 
-  try:
-     form.populate_obj(venue)
-     db.session.add(venue)
-     db.session.commit()
-     new_venue_id = venue.id
-  except:
-     error = True
-     print('*** Error saving new Venue...rolling back ***')
-     print(sys.exc_info())
-     db.session.rollback()
-  finally:
-     db.session.close()
+  if form.validate():
+    try:
+       form.populate_obj(venue)
+       db.session.add(venue)
+       db.session.commit()
+       new_venue_id = venue.id
+    except:
+       error = True
+       print('*** Error saving new Venue...rolling back ***')
+       print(sys.exc_info())
+       db.session.rollback()
+    finally:
+       db.session.close()
+  else:
+    message = []
+    for field, err in form.errors.items():
+        message.append(field + ' ' + '|'.join(err))
+    flash('Errors ' + str(message))
 
-  if error:
-       flash('An error occurred. Venue ' + form.name.data + ' could not be listed.')
-  if not error:
-     flash('Venue ' +form.name.data + ' was successfully listed!')
-     
-  return redirect(url_for('show_venue', venue_id=new_venue_id))
+  return render_template('pages/home.html')
 
 #  Delete Venue
 #  ----------------------------------------------------------------
