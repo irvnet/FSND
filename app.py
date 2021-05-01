@@ -351,22 +351,9 @@ def delete_artist(artist_id):
 #  ----------------------------------------------------------------
 @app.route('/artists/<int:artist_id>/edit', methods=['GET'])
 def edit_artist(artist_id):
-  form = ArtistForm()
-  item = Artist.query.get(artist_id)
-
-  if item:
-     form.name.data                = item.name
-     form.city.data                = item.city
-     form.state.data               = item.state
-     form.phone.data               = item.phone
-     form.genres.data              = item.genres
-     form.facebook_link.data       = item.facebook_link
-     form.image_link.data          = item.image_link
-     form.website_link.data        = item.website
-     form.seeking_venue.data       = item.seeking_venue
-     form.seeking_description.data = item.seeking_description
-
-  return render_template('forms/edit_artist.html', form=form, artist=item)
+  artist = Artist.query.first_or_404(artist_id)
+  form = ArtistForm(obj=artist)
+  return render_template('forms/edit_artist.html', form=form, artist=artist)
 
 
 @app.route('/artists/<int:artist_id>/edit', methods=['POST'])
@@ -401,24 +388,9 @@ def edit_artist_submission(artist_id):
 
 @app.route('/venues/<int:venue_id>/edit', methods=['GET'])
 def edit_venue(venue_id):
-
-  form = VenueForm()
-  item = Venue.query.get(venue_id)
-
-  if item:
-     form.name.data                = item.name
-     form.city.data                = item.city
-     form.state.data               = item.state
-     form.phone.data               = item.phone
-     form.address.data             = item.address
-     form.genres.data              = item.genres
-     form.facebook_link.data       = item.facebook_link
-     form.image_link.data          = item.image_link
-     form.website_link.data        = item.website
-     form.seeking_talent.data      = item.seeking_talent
-     form.seeking_description.data = item.seeking_description
-
-  return render_template('forms/edit_venue.html', form=form, venue=item)
+  venue = Venue.query.first_or_404(venue_id)
+  form = VenueForm(obj=venue)
+  return render_template('forms/edit_venue.html', form=form, venue=venue)
 
 @app.route('/venues/<int:venue_id>/edit', methods=['POST'])
 def edit_venue_submission(venue_id):
