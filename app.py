@@ -382,7 +382,7 @@ def edit_artist(artist_id):
      form.facebook_link.data       = item.facebook_link
      form.image_link.data          = item.image_link
      form.website_link.data        = item.website
-     #form.seeking_venue            = item.seeking_venue
+     form.seeking_venue.data       = item.seeking_venue
      form.seeking_description.data = item.seeking_description
 
   return render_template('forms/edit_artist.html', form=form, artist=item)
@@ -391,23 +391,23 @@ def edit_artist(artist_id):
 @app.route('/artists/<int:artist_id>/edit', methods=['POST'])
 def edit_artist_submission(artist_id):
 
-  item = Artist.query.get(artist_id)
-
-  item.name                = request.form['name']
-  item.city                = request.form['city']
-  item.state               = request.form['state']
-  item.phone               = request.form['phone']
-  item.genres              = request.form.getlist('genres'),
-  item.facebook_link       = request.form['facebook_link']
-  item.image_link          = request.form['image_link']
-  item.website             = request.form['website_link']
-  item.seeking_venue       = True if 'seeking_venue' in request.form else False
-  item.seeking_description = request.form['seeking_description']
-
+  artist = Artist.query.get(artist_id)
+  form = ArtistForm(request.form)
+  
+  artist.name                = form.name.data
+  artist.city                = form.city.data
+  artist.state               = form.state.data
+  artist.phone               = form.phone.data
+  artist.genres              = form.genres.data
+  artist.facebook_link       = form.facebook_link.data
+  artist.image_link          = form.image_link.data
+  artist.website             = form.website_link.data
+  artist.seeking_venue       = True if form.seeking_venue else False
+  artist.seeking_description = form.seeking_description.data
 
   try:
      error = False
-     db.session.add(item)
+     db.session.add(artist)
      db.session.commit()
   except:
      error = True
@@ -418,9 +418,9 @@ def edit_artist_submission(artist_id):
      db.session.close()
 
   if error:
-     flash('An error occurred. Artist ' + request.form['name']+ ' could not be updated.')
+     flash('An error occurred. Artist ' + form.name.data + ' could not be updated.')
   if not error:
-     flash('Artist ' + request.form['name'] + ' was successfully updated!')
+     flash('Artist ' + form.name.data + ' was successfully updated!')
 
   return redirect(url_for('show_artist', artist_id=artist_id))
 
