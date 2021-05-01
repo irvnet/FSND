@@ -470,25 +470,13 @@ def create_artist_form():
 
 @app.route('/artists/create', methods=['POST'])
 def create_artist_submission():
+  error = False
   new_artist_id = None
   form = ArtistForm(request.form)
-  is_seeking_venue = True if form.seeking_venue.data else False
+  new_artist = Artist()
 
   try:
-    new_artist = Artist(
-    name                = form.name.data,
-    city                = form.city.data,
-    state               = form.state.data,
-    phone               = form.phone.data,
-    genres              = form.genres.data,
-    facebook_link       = form.facebook_link.data,
-    image_link          = form.image_link.data,
-    website             = form.website_link.data,
-    seeking_venue       = is_seeking_venue,
-    seeking_description = form.seeking_description.data
-    )
- 
-    error = False
+    form.populate_obj(new_artist)
     db.session.add(new_artist)
     db.session.commit()
     new_artist_id = new_artist.id
