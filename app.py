@@ -372,22 +372,12 @@ def edit_artist(artist_id):
 @app.route('/artists/<int:artist_id>/edit', methods=['POST'])
 def edit_artist_submission(artist_id):
 
+  error = False
   artist = Artist.query.get(artist_id)
   form = ArtistForm(request.form)
-  
-  artist.name                = form.name.data
-  artist.city                = form.city.data
-  artist.state               = form.state.data
-  artist.phone               = form.phone.data
-  artist.genres              = form.genres.data
-  artist.facebook_link       = form.facebook_link.data
-  artist.image_link          = form.image_link.data
-  artist.website             = form.website_link.data
-  artist.seeking_venue       = True if form.seeking_venue else False
-  artist.seeking_description = form.seeking_description.data
 
   try:
-     error = False
+     form.populate_obj(artist)
      db.session.add(artist)
      db.session.commit()
   except:
