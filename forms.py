@@ -3,86 +3,8 @@ from flask_wtf import FlaskForm as Form
 from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, BooleanField
 from wtforms.validators import DataRequired, AnyOf, URL, Length, Regexp, InputRequired
 from wtforms import validators, ValidationError  
-from models import GenresEnum
+from enums import Genre, State
 import re
-
-
-
-state_choices=[
-            ('AL', 'AL'),
-            ('AK', 'AK'),
-            ('AZ', 'AZ'),
-            ('AR', 'AR'),
-            ('CA', 'CA'),
-            ('CO', 'CO'),
-            ('CT', 'CT'),
-            ('DE', 'DE'),
-            ('DC', 'DC'),
-            ('FL', 'FL'),
-            ('GA', 'GA'),
-            ('HI', 'HI'),
-            ('ID', 'ID'),
-            ('IL', 'IL'),
-            ('IN', 'IN'),
-            ('IA', 'IA'),
-            ('KS', 'KS'),
-            ('KY', 'KY'),
-            ('LA', 'LA'),
-            ('ME', 'ME'),
-            ('MT', 'MT'),
-            ('NE', 'NE'),
-            ('NV', 'NV'),
-            ('NH', 'NH'),
-            ('NJ', 'NJ'),
-            ('NM', 'NM'),
-            ('NY', 'NY'),
-            ('NC', 'NC'),
-            ('ND', 'ND'),
-            ('OH', 'OH'),
-            ('OK', 'OK'),
-            ('OR', 'OR'),
-            ('MD', 'MD'),
-            ('MA', 'MA'),
-            ('MI', 'MI'),
-            ('MN', 'MN'),
-            ('MS', 'MS'),
-            ('MO', 'MO'),
-            ('PA', 'PA'),
-            ('RI', 'RI'),
-            ('SC', 'SC'),
-            ('SD', 'SD'),
-            ('TN', 'TN'),
-            ('TX', 'TX'),
-            ('UT', 'UT'),
-            ('VT', 'VT'),
-            ('VA', 'VA'),
-            ('WA', 'WA'),
-            ('WV', 'WV'),
-            ('WI', 'WI'),
-            ('WY', 'WY'),
-]
-
-genre_choices=[
-            (GenresEnum.Alternative.name,    GenresEnum.Alternative.name),
-            (GenresEnum.Blues.name,          GenresEnum.Blues.name),
-            (GenresEnum.Classical.name,      GenresEnum.Classical.name),
-            (GenresEnum.Electronic.name,     GenresEnum.Electronic.name),
-            (GenresEnum.Folk.name,           GenresEnum.Folk.name),
-            (GenresEnum.Funk.name,           GenresEnum.Funk.name),
-            (GenresEnum.HipHop.name,         GenresEnum.HipHop.name),
-            (GenresEnum.HeavyMetal.name,     GenresEnum.HeavyMetal.name),
-            (GenresEnum.Instrumental.name,   GenresEnum.Instrumental.name),
-            (GenresEnum.Jazz.name,           GenresEnum.Jazz.name),
-            (GenresEnum.MusicalTheatre.name, GenresEnum.MusicalTheatre.name),
-            (GenresEnum.Pop.name,            GenresEnum.Pop.name),
-            (GenresEnum.Punk.name,           GenresEnum.Punk.name),
-            (GenresEnum.RnB.name,            GenresEnum.RnB.name),
-            (GenresEnum.Reggae.name,         GenresEnum.Reggae.name),
-            (GenresEnum.RocknRoll.name,      GenresEnum.RocknRoll.name),
-            (GenresEnum.Soul.name,           GenresEnum.Soul.name),
-            (GenresEnum.Other.name,          GenresEnum.Other.name),
-]
-
 
 class ShowForm(Form):
     artist_id = StringField(
@@ -123,10 +45,10 @@ class VenueForm(Form):
       if not is_valid_phone(self.phone.data):
           self.phone.errors.append(':: Invalid phone number:')
           return False
-      if not set(self.genres.data).issubset(dict(genre_choices).keys()):
+      if not set(self.genres.data).issubset(dict(Genre.choices()).keys()):
           self.genres.errors.append(':: Invalid genres.')
           return False
-      if self.state.data not in dict(state_choices).keys():
+      if self.state.data not in dict(State.choices()).keys():
           self.state.errors.append(':: Invalid state.')
           return False
       # if pass validation
@@ -140,7 +62,7 @@ class VenueForm(Form):
     )
     state = SelectField(
         'state', validators=[DataRequired()],
-        choices=state_choices
+        choices=State.choices()
     )
     address = StringField(
         'address', validators=[DataRequired()]
@@ -153,7 +75,7 @@ class VenueForm(Form):
     )
     genres = SelectMultipleField(
         'genres', validators=[DataRequired()],
-        choices=genre_choices
+        choices=Genre.choices()
     )
     facebook_link = StringField(
         'facebook_link', validators=[URL()]
@@ -181,10 +103,10 @@ class ArtistForm(Form):
       if not is_valid_phone(self.phone.data):
           self.phone.errors.append(':: Invalid phone number:')
           return False
-      if not set(self.genres.data).issubset(dict(genre_choices).keys()):
+      if not set(self.genres.data).issubset(dict(Genre.choices()).keys()):
           self.genres.errors.append(':: Invalid genres.')
           return False
-      if self.state.data not in dict(state_choices).keys():
+      if self.state.data not in dict(State.choices()).keys():
           self.state.errors.append(':: Invalid state.')
           return False
       # if pass validation
@@ -199,16 +121,16 @@ class ArtistForm(Form):
     )
     state = SelectField(
         'state', validators=[DataRequired()],
-        choices=state_choices
+        choices=State.choices()
     )
     phone = StringField('phone')
-    
+
     image_link = StringField(
         'image_link'
     )
     genres = SelectMultipleField(
         'genres', validators=[DataRequired()],
-        choices=genre_choices
+        choices=Genre.choices()
      )
     facebook_link = StringField(
         'facebook_link', validators=[URL()]
