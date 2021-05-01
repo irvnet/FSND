@@ -434,24 +434,12 @@ def edit_venue(venue_id):
 def edit_venue_submission(venue_id):
 
   # query venue from database
+  error = False
   venue = Venue.query.get(venue_id)
   form = VenueForm(request.form)
 
-  # update model with form data
-  venue.name                = form.name.data
-  venue.city                = form.city.data
-  venue.state               = form.state.data
-  venue.address             = form.address.data
-  venue.phone               = form.phone.data
-  venue.genres              = form.genres.data
-  venue.image_link          = form.image_link.data
-  venue.facebook_link       = form.facebook_link.data
-  venue.website             = form.website_link.data
-  venue.seeking_talent      = True if form.seeking_talent.data else False
-  venue.seeking_description = form.seeking_description.data
-
   try:
-     error = False
+     form.populate_obj(venue)
      db.session.add(venue)
      db.session.commit()
   except:
